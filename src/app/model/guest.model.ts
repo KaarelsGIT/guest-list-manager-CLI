@@ -4,5 +4,5 @@ export interface Guest {
   id?: number;
   name: string;
   transportation: boolean;
-  status: Status;
+  status: Status | string;
 }
