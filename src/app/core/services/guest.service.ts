@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-import {environment} from '../../environments/environment';
+import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Guest} from '../model/guest.model';
-import {GuestResponseDTO} from '../dto/guest-response.dto';
-import {GuestListDto} from '../dto/guest-list.dto';
+import {Guest} from '../../model/guest.model';
+import {GuestResponseDTO} from '../../dto/guest-response.dto';
+import {GuestListDto} from '../../dto/guest-list.dto';
 
 
 @Injectable({
