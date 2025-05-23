@@ -1,0 +1,16 @@
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Status</th>
+    <th>Transport</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let guest of guests">
+    <td>{{ guest.name }}</td>
+    <td>{{ guest.status }}</td>
+    <td>{{ guest.transportation ? 'Needed' : 'Not needed' }}</td>
+  </tr>
+  </tbody>
+</table>
