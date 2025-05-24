@@ -1,0 +1,12 @@
+<!-- MODAL -->
+<div *ngIf="message.modal" class="modal-overlay" (click)="close()">
+  <div class="modal-box" [ngClass]="message.type" (click)="$event.stopPropagation()">
+    <p>{{ message.text }}</p>
+    <button (click)="close()">✕</button>
+  </div>
+</div>
+
+<!-- INLINE -->
+<div *ngIf="!message.modal" class="app-message" [ngClass]="message.type">
+  {{ message.text }}
+</div>
