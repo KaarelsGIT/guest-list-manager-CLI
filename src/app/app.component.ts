@@ -3,10 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import {HeaderComponent} from './shared/components/header/header.component';
 import {GuestTableComponent} from './features/guest-table/guest-table.component';
 import {GuestService} from './core/services/guest.service';
+import {FooterComponent} from './shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HeaderComponent, GuestTableComponent],
+  imports: [RouterOutlet, HeaderComponent, GuestTableComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
