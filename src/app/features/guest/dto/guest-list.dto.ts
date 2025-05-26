@@ -1,4 +1,4 @@
-import {Guest} from '../model/guest.model';
+import {Guest} from '../models/guest.model';
 
 export interface GuestListDto {
   guests: Guest[];

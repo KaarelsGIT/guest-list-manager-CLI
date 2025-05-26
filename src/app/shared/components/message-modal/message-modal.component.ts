@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {AppMessage} from '../../../model/message.model';
+import {AppMessage} from '../../models/message.model';
 import {NgClass, NgIf} from '@angular/common';
 
 @Component({

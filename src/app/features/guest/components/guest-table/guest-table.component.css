@@ -25,3 +25,8 @@ th {
   font-weight: bold;
   color: #333;
 }
+
+.actions {
+  display: flex;
+  gap: 10px;
+}

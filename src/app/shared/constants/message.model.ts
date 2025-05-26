@@ -1,4 +1,4 @@
-import {AppMessage} from '../../model/message.model';
+import {AppMessage} from '../models/message.model';
 
 export const MESSAGES = {
   guestAdded: { type: 'success', text: 'Guest added successfully.' } as AppMessage,
