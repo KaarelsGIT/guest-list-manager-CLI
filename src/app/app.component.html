@@ -1,6 +1,13 @@
 <app-header></app-header>
-<router-outlet>
-  <app-guest-table [guests]="guests">
-  </app-guest-table>
-</router-outlet>
+
+<div class="buttons">
+  <button mat-raised-button *ngIf="!isFormVisible" (click)="toggleForm()">Add Guest</button>
+</div>
+
+<div *ngIf="isFormVisible">
+  <app-add-guest (guestAdded)="onGuestAdded()" (cancelled)="toggleForm()"></app-add-guest>
+</div>
+
+<app-guest-table [guests]="guests"></app-guest-table>
+
 <app-footer></app-footer>

@@ -1,1 +1,27 @@
-<p>add-guest works!</p>
+<div class="form-card">
+  <form (ngSubmit)="addGuest()" #guestForm="ngForm">
+    <h2>Add New Guest</h2>
+
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" [(ngModel)]="guest.name" required>
+    </div>
+
+    <div class="form-group">
+      <label for="status">Status</label>
+      <select id="status" name="status" [(ngModel)]="guest.status" required>
+        <option *ngFor="let s of statuses" [value]="s.value">{{s.label}}</option>
+      </select>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label>Transport needed?</label>
+      <input type="checkbox" name="transportation" [(ngModel)]="guest.transportation">
+    </div>
+
+    <div class="button-container">
+      <button type="button" (click)="cancel()">Close</button>
+      <button type="submit" [disabled]="guestForm.invalid">Add</button>
+    </div>
+  </form>
+</div>

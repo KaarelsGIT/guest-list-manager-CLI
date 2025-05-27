@@ -10,7 +10,6 @@ import {MessageService} from '../../../../shared/components/service/message.serv
 import {MessageModalComponent} from '../../../../shared/components/message-modal/message-modal.component';
 import {AppMessage} from '../../../../shared/models/message.model';
 import { Subscription } from 'rxjs';
-import {AddGuestComponent} from '../add-guest/add-guest.component';
 
 @Component({
   selector: 'app-guest-table',
@@ -19,8 +18,7 @@ import {AddGuestComponent} from '../add-guest/add-guest.component';
     MatButton,
     ConfirmationDialogComponent,
     NgIf,
-    MessageModalComponent,
-    AddGuestComponent
+    MessageModalComponent
   ],
   templateUrl: './guest-table.component.html',
   styleUrl: './guest-table.component.css'
@@ -29,7 +27,6 @@ export class GuestTableComponent implements OnInit{
   @Input() guests: Guest[] =[];
 
   message: AppMessage | null = null;
-  isFormVisible = false;
   private messageSubscription?: Subscription;
   showConfirmDialog = false;
   guestToDelete?: number;
@@ -94,9 +91,5 @@ export class GuestTableComponent implements OnInit{
 
   view(guest: Guest) {
 
-  }
-
-  toggleForm() {
-    this.isFormVisible = !this.isFormVisible;
   }
 }

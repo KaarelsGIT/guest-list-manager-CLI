@@ -1,31 +1,35 @@
 import {Component, OnInit} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import {HeaderComponent} from './shared/components/header/header.component';
 import {FooterComponent} from './shared/components/footer/footer.component';
 import {GuestTableComponent} from './features/guest/components/guest-table/guest-table.component';
 import {GuestService} from './features/guest/services/guest.service';
+import {AddGuestComponent} from './features/guest/components/add-guest/add-guest.component';
+import {MatButton} from '@angular/material/button';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-root',
   imports: [
-    RouterOutlet,
     HeaderComponent,
     GuestTableComponent,
     FooterComponent,
-    GuestTableComponent],
+    GuestTableComponent,
+    AddGuestComponent,
+    MatButton,
+    NgIf
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
   title = 'GuestManagerCLI';
   guests: any[] = [];
+  isFormVisible = false;
 
-  constructor(
-    private guestService: GuestService
-  ) { }
+  constructor(private guestService: GuestService) { }
 
   ngOnInit(): void {
-    this.loadGuests()
+    this.loadGuests();
   }
 
   loadGuests(): void {
@@ -37,5 +41,13 @@ export class AppComponent implements OnInit {
         console.error('Failed to load guests:', err);
       }
     });
+  }
+
+  toggleForm(): void {
+    this.isFormVisible = !this.isFormVisible;
+  }
+
+  onGuestAdded(): void {
+    this.loadGuests();
   }
 }

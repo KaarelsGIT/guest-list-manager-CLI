@@ -25,7 +25,7 @@ export class GuestService {
       status: guest.status
     };
 
-    return this.http.post<GuestResponseDTO>(this.url, payload);
+    return this.http.post<GuestResponseDTO>(`${this.url}/add`, payload);
   }
 
   getAllGuests(sort: string = 'asc', filter: string = 'all'): Observable<GuestListDto> {

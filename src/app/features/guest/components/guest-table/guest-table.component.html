@@ -1,17 +1,7 @@
-<div class="buttons">
-  <button mat-raised-button *ngIf="!isFormVisible" (click)="toggleForm()">Add Guest</button>
-  <button mat-raised-button *ngIf="isFormVisible" (click)="toggleForm()">Close</button>
-</div>
-
-<div *ngIf="isFormVisible">
-  <app-add-guest>
-
-  </app-add-guest>
-</div>
-
 <table>
   <thead>
   <tr>
+    <th>#</th>
     <th>Name</th>
     <th>Status</th>
     <th>Transport</th>
@@ -19,7 +9,8 @@
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let guest of guests">
+  <tr *ngFor="let guest of guests; let i = index">
+    <td>{{ i + 1 }}</td>
     <td>{{ guest.name }}</td>
     <td>{{ guest.status }}</td>
     <td>{{ guest.transportation ? 'Needed' : 'Not needed' }}</td>
