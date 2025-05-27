@@ -1,3 +1,14 @@
+<div class="buttons">
+  <button mat-raised-button *ngIf="!isFormVisible" (click)="toggleForm()">Add Guest</button>
+  <button mat-raised-button *ngIf="isFormVisible" (click)="toggleForm()">Close</button>
+</div>
+
+<div *ngIf="isFormVisible">
+  <app-add-guest>
+
+  </app-add-guest>
+</div>
+
 <table>
   <thead>
   <tr>
