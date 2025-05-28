@@ -11,7 +11,20 @@
   <tbody>
   <tr *ngFor="let guest of guests; let i = index">
     <td>{{ i + 1 }}</td>
-    <td>{{ guest.name }}</td>
+    <td (click)="startEditName(guest)" >
+      <ng-container *ngIf="editedGuest !== guest; else editNameTemplate">
+        {{ guest.name }}
+      </ng-container>
+
+      <ng-template #editNameTemplate>
+        <input type="text"
+               [(ngModel)]="editedName"
+               (blur)="saveNameEdit(guest)"
+               (keydown.enter)="saveNameEdit(guest)"
+               (keydown.escape)="cancelNameEdit()"
+               autofocus />
+      </ng-template>
+    </td>
     <td>
       <div class="toggle-cell"
            [ngClass]="getTransportationClass(guest.transportation)"

@@ -33,11 +33,60 @@ export class GuestTableComponent implements OnInit{
   private messageSubscription?: Subscription;
   showConfirmDialog = false;
   guestToDelete?: number;
+  editedGuest: Guest | null = null;
+  editedName: string = '';
 
-  transportationOptions= [
-    {value: true, label: 'Needed'},
-    {value: false, label: 'Not needed'},
-  ]
+  // transportationOptions= [
+  //   {value: true, label: 'Needed'},
+  //   {value: false, label: 'Not needed'},
+  // ]
+
+  constructor(
+    private guestService: GuestService,
+    private messageService: MessageService
+  ) { }
+
+  startEditName(guest: Guest): void {
+    this.editedGuest = guest;
+    this.editedName = guest.name;
+  }
+
+  saveNameEdit(guest: Guest): void {
+    if (!this.editedGuest) return;
+
+    const trimmedName = this.editedName.trim();
+
+    if (trimmedName !== guest.name) {
+      guest.name = trimmedName;
+
+      this.guestService.updateGuest(guest.id, guest).subscribe({
+        next: () => {
+          this.messageService.show({
+            type: 'success',
+            text: 'Name updated successfully.',
+            modal: true,      // Kui sul on modal flag olemas
+            duration: 3000
+          });
+        },
+        error: () => {
+          this.messageService.show({
+            type: 'error',
+            text: 'Failed to update name.',
+            modal: true,
+            duration: 3000
+          });
+        }
+      });
+    }
+
+    this.editedGuest = null;
+    this.editedName = '';
+  }
+
+  cancelNameEdit(): void {
+    this.editedGuest = null;
+    this.editedName = '';
+  }
 
   getStatusLabel(status: string): string {
     switch (status) {
@@ -47,11 +96,6 @@ export class GuestTableComponent implements OnInit{
       default: return 'UNKNOWN';
     }
   }
-
-  constructor(
-    private guestService: GuestService,
-    private messageService: MessageService
-  ) { }
 
   ngOnInit(): void {
     this.messageSubscription = this.messageService.message$.subscribe(msg => {
