@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Guest} from '../../models/guest.model';
-import {NgForOf, NgIf} from '@angular/common';
+import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
 import {GuestService} from '../../services/guest.service';
 import {
@@ -10,6 +10,7 @@ import {MessageService} from '../../../../shared/components/service/message.serv
 import {MessageModalComponent} from '../../../../shared/components/message-modal/message-modal.component';
 import {AppMessage} from '../../../../shared/models/message.model';
 import { Subscription } from 'rxjs';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-guest-table',
@@ -18,7 +19,9 @@ import { Subscription } from 'rxjs';
     MatButton,
     ConfirmationDialogComponent,
     NgIf,
-    MessageModalComponent
+    MessageModalComponent,
+    FormsModule,
+    NgClass
   ],
   templateUrl: './guest-table.component.html',
   styleUrl: './guest-table.component.css'
@@ -31,6 +34,20 @@ export class GuestTableComponent implements OnInit{
   showConfirmDialog = false;
   guestToDelete?: number;
 
+  transportationOptions= [
+    {value: true, label: 'Needed'},
+    {value: false, label: 'Not needed'},
+  ]
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'PENDING': return 'PENDING';
+      case 'ACCEPTED': return 'ACCEPTED';
+      case 'REJECTED': return 'REJECTED';
+      default: return 'UNKNOWN';
+    }
+  }
+
   constructor(
     private guestService: GuestService,
     private messageService: MessageService
@@ -39,6 +56,44 @@ export class GuestTableComponent implements OnInit{
   ngOnInit(): void {
     this.messageSubscription = this.messageService.message$.subscribe(msg => {
       this.message = msg;
+    });
+  }
+
+  toggleTransportation(guest: Guest): void {
+    guest.transportation = !guest.transportation;
+
+    this.guestService.updateGuest(guest.id, guest).subscribe({
+      next: () => {
+        console.log('Transportation status updated successfully.');
+      },
+      error: (err) => {
+        console.error('Failed to update transportation status:', err);
+      }
+    });
+  }
+
+  toggleStatus(guest: Guest): void {
+    switch (guest.status) {
+      case 'PENDING':
+        guest.status = 'ACCEPTED';
+        break;
+      case 'ACCEPTED':
+        guest.status = 'REJECTED';
+        break;
+      case 'REJECTED':
+        guest.status = 'PENDING';
+        break;
+      default:
+        guest.status = 'PENDING';
+    }
+
+    this.guestService.updateGuest(guest.id, guest).subscribe({
+      next: () => {
+        console.log('Status updated successfully');
+      },
+      error: (err) => {
+        console.error('Failed to update status', err);
+      }
     });
   }
 
@@ -54,10 +109,6 @@ export class GuestTableComponent implements OnInit{
 
   closeMessage() {
     this.messageService.clear();
-  }
-
-  edit(guest: Guest) {
-
   }
 
   performDelete(): void {
@@ -89,7 +140,16 @@ export class GuestTableComponent implements OnInit{
     });
   }
 
-  view(guest: Guest) {
+  getTransportationClass(transportation: boolean): string {
+    return transportation ? 'status-needed' : 'status-not-needed';
+  }
 
+  getStatusClass(status: string): string {
+    switch(status) {
+      case 'ACCEPTED': return 'status-accepted';
+      case 'PENDING': return 'status-pending';
+      case 'REJECTED': return 'status-rejected';
+      default: return '';
+    }
   }
 }

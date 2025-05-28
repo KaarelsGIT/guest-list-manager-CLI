@@ -26,6 +26,50 @@ th {
   color: #333;
 }
 
+.toggle-cell {
+  cursor: pointer;
+  user-select: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: #111;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f3f4f6;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.toggle-cell:hover {
+  background-color: #e5e7eb;
+}
+
+.status-needed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-not-needed {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.status-accepted {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-pending {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.status-rejected {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
 .actions {
   display: flex;
   gap: 10px;

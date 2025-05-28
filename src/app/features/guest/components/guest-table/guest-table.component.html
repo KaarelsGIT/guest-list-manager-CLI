@@ -3,8 +3,8 @@
   <tr>
     <th>#</th>
     <th>Name</th>
-    <th>Status</th>
     <th>Transport</th>
+    <th>Status</th>
     <th>actions</th>
   </tr>
   </thead>
@@ -12,12 +12,22 @@
   <tr *ngFor="let guest of guests; let i = index">
     <td>{{ i + 1 }}</td>
     <td>{{ guest.name }}</td>
-    <td>{{ guest.status }}</td>
-    <td>{{ guest.transportation ? 'Needed' : 'Not needed' }}</td>
+    <td>
+      <div class="toggle-cell"
+           [ngClass]="getTransportationClass(guest.transportation)"
+           (click)="toggleTransportation(guest)">
+        {{ guest.transportation ? 'Needed' : 'Not needed' }}
+      </div>
+    </td>
+    <td>
+      <div class="toggle-cell"
+           [ngClass]="getStatusClass(guest.status)"
+           (click)="toggleStatus(guest)">
+        {{ getStatusLabel(guest.status) }}
+      </div>
+    </td>
     <td>
       <div class="actions">
-        <button mat-raised-button (click)="view(guest)">View</button>
-        <button mat-raised-button (click)="edit(guest)">Edit</button>
         <button mat-raised-button (click)="confirmDelete(guest.id)">Delete</button>
       </div>
     </td>
