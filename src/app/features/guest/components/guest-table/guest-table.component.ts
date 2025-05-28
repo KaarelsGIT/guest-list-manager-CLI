@@ -173,7 +173,7 @@ export class GuestTableComponent implements OnInit{
           type: 'error',
           text: 'Failed to delete guest.',
           modal: true,
-          duration: 3000
+          duration: 1500
         });
       }
     });

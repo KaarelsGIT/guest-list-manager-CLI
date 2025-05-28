@@ -5,6 +5,7 @@
     <th>Name</th>
     <th>Transport</th>
     <th>Status</th>
+    <th>Comments</th>
     <th>actions</th>
   </tr>
   </thead>
@@ -39,6 +40,7 @@
         {{ getStatusLabel(guest.status) }}
       </div>
     </td>
+    <td></td>
     <td>
       <div class="actions">
         <button mat-raised-button (click)="confirmDelete(guest.id)">Delete</button>
