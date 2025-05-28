@@ -46,13 +46,12 @@ export class GuestTableComponent implements OnInit{
     this.editedName = guest.name;
   }
 
-  saveNameEdit(guest: Guest): void {
-    if (!this.editedGuest) return;
+  saveNameEditFromContent(event: Event, guest: Guest): void {
+    const element = event.target as HTMLElement;
+    const newName = element.textContent?.trim() || '';
 
-    const trimmedName = this.editedName.trim();
-
-    if (trimmedName !== guest.name) {
-      guest.name = trimmedName;
+    if (newName && newName !== guest.name) {
+      guest.name = newName;
 
       this.guestService.updateGuest(guest.id, guest).subscribe({
         next: () => {
@@ -60,7 +59,7 @@ export class GuestTableComponent implements OnInit{
             type: 'success',
             text: 'Name updated successfully.',
             modal: true,
-            duration: 3000
+            duration: 1000
           });
         },
         error: () => {
@@ -68,7 +67,7 @@ export class GuestTableComponent implements OnInit{
             type: 'error',
             text: 'Failed to update name.',
             modal: true,
-            duration: 3000
+            duration: 1000
           });
         }
       });
@@ -162,7 +161,7 @@ export class GuestTableComponent implements OnInit{
           type: 'success',
           text: 'Guest deleted successfully.',
           modal: true,
-          duration: 3000
+          duration: 1000
         });
       },
       error: (err) => {
@@ -173,7 +172,7 @@ export class GuestTableComponent implements OnInit{
           type: 'error',
           text: 'Failed to delete guest.',
           modal: true,
-          duration: 1500
+          duration: 1000
         });
       }
     });

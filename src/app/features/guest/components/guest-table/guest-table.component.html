@@ -16,14 +16,16 @@
       <ng-container *ngIf="editedGuest !== guest; else editNameTemplate">
         {{ guest.name }}
       </ng-container>
-
       <ng-template #editNameTemplate>
-        <input type="text"
-               [(ngModel)]="editedName"
-               (blur)="saveNameEdit(guest)"
-               (keydown.enter)="saveNameEdit(guest)"
-               (keydown.escape)="cancelNameEdit()"
-               autofocus />
+        <div
+          class="editable-name"
+          contenteditable="true"
+          (blur)="saveNameEditFromContent($event, guest)"
+          (keydown.enter)="saveNameEditFromContent($event, guest)"
+          (keydown.escape)="cancelNameEdit()"
+          [textContent]="editedName"
+          autofocus>
+        </div>
       </ng-template>
     </td>
     <td>
