@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {Guest} from '../../models/guest.model';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
@@ -26,8 +26,10 @@ import {FormsModule} from '@angular/forms';
   templateUrl: './guest-table.component.html',
   styleUrl: './guest-table.component.css'
 })
-export class GuestTableComponent implements OnInit{
-  @Input() guests: Guest[] =[];
+export class GuestTableComponent implements OnInit, AfterViewChecked {
+  @Input() guests: Guest[] = [];
+
+  @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLDivElement>;
 
   message: AppMessage | null = null;
   private messageSubscription?: Subscription;
@@ -39,7 +41,25 @@ export class GuestTableComponent implements OnInit{
   constructor(
     private guestService: GuestService,
     private messageService: MessageService
-  ) { }
+  ) {}
+
+  ngOnInit(): void {
+    this.messageSubscription = this.messageService.message$.subscribe(msg => {
+      this.message = msg;
+    });
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.editedGuest && this.nameInputRef) {
+      this.nameInputRef.nativeElement.focus();
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.selectNodeContents(this.nameInputRef.nativeElement);
+      range.collapse(false);
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    }
+  }
 
   startEditName(guest: Guest): void {
     this.editedGuest = guest;
@@ -91,12 +111,6 @@ export class GuestTableComponent implements OnInit{
     }
   }
 
-  ngOnInit(): void {
-    this.messageSubscription = this.messageService.message$.subscribe(msg => {
-      this.message = msg;
-    });
-  }
-
   toggleTransportation(guest: Guest): void {
     guest.transportation = !guest.transportation;
 
@@ -145,10 +159,6 @@ export class GuestTableComponent implements OnInit{
     this.guestToDelete = undefined;
   }
 
-  closeMessage() {
-    this.messageService.clear();
-  }
-
   performDelete(): void {
     if (this.guestToDelete === undefined) return;
 
@@ -183,11 +193,15 @@ export class GuestTableComponent implements OnInit{
   }
 
   getStatusClass(status: string): string {
-    switch(status) {
+    switch (status) {
       case 'ACCEPTED': return 'status-accepted';
       case 'PENDING': return 'status-pending';
       case 'REJECTED': return 'status-rejected';
       default: return '';
     }
+  }
+
+  closeMessage(): void {
+    this.messageService.clear();
   }
 }

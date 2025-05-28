@@ -76,13 +76,19 @@ th {
 }
 
 .editable-name {
-  display: inline-block;
-  min-width: 80px;
+  display: block;
+  width: 100%;
+  min-height: 1.5em;
   padding: 4px 6px;
   border-radius: 4px;
-  outline: none;
   background-color: transparent;
-  transition: background-color 0.2s;
+  outline: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+  font: inherit;
+  line-height: inherit;
 }
 
 .editable-name:focus {

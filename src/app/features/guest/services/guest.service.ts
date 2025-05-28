@@ -22,7 +22,8 @@ export class GuestService {
     const payload = {
       name: guest.name,
       transportation: guest.transportation,
-      status: guest.status
+      status: guest.status,
+      comment: guest.comment
     };
 
     return this.http.post<GuestResponseDTO>(`${this.url}/add`, payload);
@@ -44,7 +45,8 @@ export class GuestService {
     const payload = {
       name: guest.name,
       transportation: guest.transportation,
-      status: guest.status
+      status: guest.status,
+      comment: guest.comment
     };
     return this.http.put<GuestResponseDTO>(`${this.url}/update/${id}`, payload);
   }

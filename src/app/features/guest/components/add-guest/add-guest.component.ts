@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {NgForOf} from '@angular/common';
 import {Guest} from '../../models/guest.model';
@@ -15,14 +15,17 @@ import {GuestService} from '../../services/guest.service';
   templateUrl: './add-guest.component.html',
   styleUrl: './add-guest.component.css'
 })
-export class AddGuestComponent {
+export class AddGuestComponent implements AfterViewInit {
   @Output() guestAdded = new EventEmitter<void>();
   @Output() cancelled = new EventEmitter<void>();
+
+  @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLInputElement>;
 
   guest: Partial<Guest> = {
     name: '',
     status: Status.PENDING,
-    transportation: false
+    transportation: false,
+    comment: ''
   };
 
   statuses = [
@@ -31,26 +34,37 @@ export class AddGuestComponent {
     { label: 'Rejected', value: Status.REJECTED }
   ];
 
-  constructor(
-    private guestService: GuestService
-  ) { }
+  constructor(private guestService: GuestService) {}
 
-  addGuest() {
-    if (!this.guest.name || !this.guest.status) return;
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.nameInputRef?.nativeElement.focus();
+    });
+  }
+
+  addGuest(): void {
+    if (!this.guest.name?.trim() || !this.guest.status) return;
 
     this.guestService.addGuest(this.guest as Guest).subscribe({
-      next: (response) => {
-        console.log('Guest added:', response);
-        this.guest = { name: '', status: Status.PENDING, transportation: false };
+      next: () => {
+        this.guest = {
+          name: '',
+          status: Status.PENDING,
+          transportation: false,
+          comment: ''
+        };
         this.guestAdded.emit();
+        setTimeout(() => {
+          this.nameInputRef?.nativeElement.focus();
+        });
       },
       error: (err) => {
-        console.error('Error adding guest', err);
+        console.error('Error adding guest:', err);
       }
     });
   }
 
-  cancel() {
+  cancel(): void {
     this.cancelled.emit();
   }
 }

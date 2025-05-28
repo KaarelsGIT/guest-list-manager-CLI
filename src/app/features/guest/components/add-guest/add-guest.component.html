@@ -19,6 +19,11 @@
       <input type="checkbox" name="transportation" [(ngModel)]="guest.transportation">
     </div>
 
+    <div class="form-group">
+      <label for="comment">Comments</label>
+      <textarea  id="comment" name="comment" [(ngModel)]="guest.comment"></textarea>
+    </div>
+
     <div class="button-container">
       <button type="button" (click)="cancel()">Close</button>
       <button type="submit" [disabled]="guestForm.invalid">Add</button>

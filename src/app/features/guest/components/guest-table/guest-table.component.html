@@ -24,7 +24,7 @@
           (keydown.enter)="saveNameEditFromContent($event, guest)"
           (keydown.escape)="cancelNameEdit()"
           [textContent]="editedName"
-          autofocus>
+          #nameInput>
         </div>
       </ng-template>
     </td>
@@ -42,7 +42,7 @@
         {{ getStatusLabel(guest.status) }}
       </div>
     </td>
-    <td></td>
+    <td>{{guest.comment}}</td>
     <td>
       <div class="actions">
         <button mat-raised-button (click)="confirmDelete(guest.id)">Delete</button>

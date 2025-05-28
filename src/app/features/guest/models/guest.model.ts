@@ -5,4 +5,5 @@ export interface Guest {
   name: string;
   transportation: boolean;
   status: Status | string;
+  comment: string;
 }
