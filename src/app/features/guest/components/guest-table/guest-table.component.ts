@@ -64,7 +64,7 @@ export class GuestTableComponent implements OnInit{
           this.messageService.show({
             type: 'success',
             text: 'Name updated successfully.',
-            modal: true,      // Kui sul on modal flag olemas
+            modal: true,
             duration: 3000
           });
         },
