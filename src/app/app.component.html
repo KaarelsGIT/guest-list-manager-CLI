@@ -1,18 +1,28 @@
-<app-header></app-header>
+<header>
+  <app-header
+    [formVisible]="isFormVisible"
+    (addClicked)="toggleForm()"
+    (removeClicked)="onRemoveAllGuests()"
+  ></app-header>
+</header>
 
-<div class="buttons">
-  <button mat-raised-button *ngIf="!isFormVisible" (click)="toggleForm()">Add Guest</button>
+<body>
+<div class="container">
+  <div *ngIf="isFormVisible">
+    <app-add-guest
+      (guestAdded)="onGuestAdded()"
+      (cancelled)="toggleForm()"
+    ></app-add-guest>
+  </div>
+  <div class="accepted-count">Accepted: {{ acceptedCount }}</div>
+  <app-guest-table
+    #guestTable
+    [guests]="guests"
+    (statusChange)="loadGuests()"
+  ></app-guest-table>
 </div>
+</body>
 
-<div *ngIf="isFormVisible"
->
-  <app-add-guest
-    (guestAdded)="onGuestAdded()"
-    (cancelled)="toggleForm()"
-  >
-  </app-add-guest>
-</div>
-
-<app-guest-table [guests]="guests"></app-guest-table>
-
-<app-footer></app-footer>
+<footer>
+  <app-footer></app-footer>
+</footer>

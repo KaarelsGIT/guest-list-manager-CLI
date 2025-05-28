@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Guest} from '../../models/guest.model';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
@@ -28,6 +28,7 @@ import {FormsModule} from '@angular/forms';
 })
 export class GuestTableComponent implements OnInit, AfterViewChecked {
   @Input() guests: Guest[] = [];
+  @Output() statusChange = new EventEmitter<void>();
 
   @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLDivElement>;
 
@@ -142,6 +143,7 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
     this.guestService.updateGuest(guest.id, guest).subscribe({
       next: () => {
         console.log('Status updated successfully');
+        this.statusChange.emit();
       },
       error: (err) => {
         console.error('Failed to update status', err);
@@ -160,32 +162,58 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
   }
 
   performDelete(): void {
-    if (this.guestToDelete === undefined) return;
+    if (this.guestToDelete === undefined) {
+      this.guestService.deleteAllGuests().subscribe({
+        next: () => {
+          this.guests = [];
+          this.cancelDelete();
+          this.messageService.show({
+            type: 'success',
+            text: 'All guests deleted successfully.',
+            modal: true,
+            duration: 1000
+          });
+        },
+        error: (err) => {
+          console.error('Failed to delete all guests', err);
+          this.cancelDelete();
+          this.messageService.show({
+            type: 'error',
+            text: 'Failed to delete all guests.',
+            modal: true,
+            duration: 1000
+          });
+        }
+      });
+    } else {
+      this.guestService.deleteGuest(this.guestToDelete).subscribe({
+        next: () => {
+          this.guests = this.guests.filter(g => g.id !== this.guestToDelete);
+          this.cancelDelete();
+          this.messageService.show({
+            type: 'success',
+            text: 'Guest deleted successfully.',
+            modal: true,
+            duration: 1000
+          });
+        },
+        error: (err) => {
+          console.error('Delete failed', err);
+          this.cancelDelete();
+          this.messageService.show({
+            type: 'error',
+            text: 'Failed to delete guest.',
+            modal: true,
+            duration: 1000
+          });
+        }
+      });
+    }
+  }
 
-    this.guestService.deleteGuest(this.guestToDelete).subscribe({
-      next: () => {
-        this.guests = this.guests.filter(g => g.id !== this.guestToDelete);
-        this.cancelDelete();
-
-        this.messageService.show({
-          type: 'success',
-          text: 'Guest deleted successfully.',
-          modal: true,
-          duration: 1000
-        });
-      },
-      error: (err) => {
-        console.error('Delete failed', err);
-        this.cancelDelete();
-
-        this.messageService.show({
-          type: 'error',
-          text: 'Failed to delete guest.',
-          modal: true,
-          duration: 1000
-        });
-      }
-    });
+  confirmDeleteAllGuests(): void {
+    this.showConfirmDialog = true;
+    this.guestToDelete = undefined;
   }
 
   getTransportationClass(transportation: boolean): string {

@@ -55,7 +55,9 @@
 <!-- Confirm dialog -->
 <app-confirmation-dialog
   *ngIf="showConfirmDialog"
-  [message]="'Are you sure you want to delete guest?'"
+  [message]="guestToDelete === undefined
+    ? 'Are you sure you want to delete ALL guests?'
+    : 'Are you sure you want to delete this guest?'"
   (confirmed)="performDelete()"
   (cancelled)="cancelDelete()">
 </app-confirmation-dialog>

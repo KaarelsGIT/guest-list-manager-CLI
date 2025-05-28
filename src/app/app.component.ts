@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {HeaderComponent} from './shared/components/header/header.component';
 import {FooterComponent} from './shared/components/footer/footer.component';
 import {GuestTableComponent} from './features/guest/components/guest-table/guest-table.component';
@@ -13,9 +13,7 @@ import {NgIf} from '@angular/common';
     HeaderComponent,
     GuestTableComponent,
     FooterComponent,
-    GuestTableComponent,
     AddGuestComponent,
-    MatButton,
     NgIf
   ],
   templateUrl: './app.component.html',
@@ -25,6 +23,12 @@ export class AppComponent implements OnInit {
   title = 'GuestManagerCLI';
   guests: any[] = [];
   isFormVisible = false;
+  acceptedCount: number = 0;
+
+  @ViewChild('guestTable') guestTableComponent!: GuestTableComponent;
+  onRemoveAllGuests() {
+    this.guestTableComponent.confirmDeleteAllGuests();
+  }
 
   constructor(private guestService: GuestService) { }
 
@@ -36,6 +40,7 @@ export class AppComponent implements OnInit {
     this.guestService.getAllGuests().subscribe({
       next: (data) => {
         this.guests = data.guests;
+        this.acceptedCount = data.accepted;
       },
       error: (err) => {
         console.error('Failed to load guests:', err);
