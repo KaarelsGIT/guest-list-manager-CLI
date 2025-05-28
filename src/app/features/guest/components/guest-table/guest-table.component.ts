@@ -67,6 +67,11 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
     this.editedName = guest.name;
   }
 
+  cancelNameEdit(): void {
+    this.editedGuest = null;
+    this.editedName = '';
+  }
+
   saveNameEditFromContent(event: Event, guest: Guest): void {
     const element = event.target as HTMLElement;
     const newName = element.textContent?.trim() || '';
@@ -94,11 +99,6 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
       });
     }
 
-    this.editedGuest = null;
-    this.editedName = '';
-  }
-
-  cancelNameEdit(): void {
     this.editedGuest = null;
     this.editedName = '';
   }

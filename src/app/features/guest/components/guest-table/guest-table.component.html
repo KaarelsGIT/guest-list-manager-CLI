@@ -21,8 +21,8 @@
           class="editable-name"
           contenteditable="true"
           (blur)="saveNameEditFromContent($event, guest)"
-          (keydown.enter)="saveNameEditFromContent($event, guest)"
           (keydown.escape)="cancelNameEdit()"
+          (keydown.enter)="saveNameEditFromContent($event, guest)"
           [textContent]="editedName"
           #nameInput>
         </div>
