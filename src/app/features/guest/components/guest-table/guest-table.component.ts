@@ -36,11 +36,6 @@ export class GuestTableComponent implements OnInit{
   editedGuest: Guest | null = null;
   editedName: string = '';
 
-  // transportationOptions= [
-  //   {value: true, label: 'Needed'},
-  //   {value: false, label: 'Not needed'},
-  // ]
-
   constructor(
     private guestService: GuestService,
     private messageService: MessageService
