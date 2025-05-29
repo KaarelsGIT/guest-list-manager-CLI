@@ -31,13 +31,17 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
   @Output() statusChange = new EventEmitter<void>();
 
   @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('commentInput') commentInputRef?: ElementRef<HTMLDivElement>;
 
   message: AppMessage | null = null;
   private messageSubscription?: Subscription;
   showConfirmDialog = false;
   guestToDelete?: number;
+  isEditingName = false;
+  isEditingComment = false;
   editedGuest: Guest | null = null;
   editedName: string = '';
+  editedComment: string = '';
 
   constructor(
     private guestService: GuestService,
@@ -51,20 +55,32 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    if (this.editedGuest && this.nameInputRef) {
-      this.nameInputRef.nativeElement.focus();
-      const range = document.createRange();
-      const sel = window.getSelection();
-      range.selectNodeContents(this.nameInputRef.nativeElement);
-      range.collapse(false);
-      sel?.removeAllRanges();
-      sel?.addRange(range);
+    if (this.editedGuest) {
+      if (this.isEditingName && this.nameInputRef) {
+        this.nameInputRef.nativeElement.focus();
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.selectNodeContents(this.nameInputRef.nativeElement);
+        range.collapse(false);
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      } else if (this.isEditingComment && this.commentInputRef) {
+        this.commentInputRef.nativeElement.focus();
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.selectNodeContents(this.commentInputRef.nativeElement);
+        range.collapse(false);
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
     }
   }
 
   startEditName(guest: Guest): void {
     this.editedGuest = guest;
     this.editedName = guest.name;
+    this.isEditingName = true;
+    this.isEditingComment = false;
   }
 
   cancelNameEdit(): void {
@@ -228,6 +244,50 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
       default: return '';
     }
   }
+
+  startEditComment(guest: Guest): void {
+    this.editedGuest = guest;
+    this.editedComment = guest.comment;
+    this.isEditingName = false;
+    this.isEditingComment = true;
+  }
+
+  cancelCommentEdit(): void {
+    this.editedGuest = null;
+    this.editedComment = '';
+  }
+
+  saveCommentEditFromContent(event: Event, guest: Guest): void {
+    const element = event.target as HTMLElement;
+    const newComment = element.textContent?.trim() || '';
+
+    if (newComment && newComment !== guest.comment) {
+      guest.comment = newComment;
+
+      this.guestService.updateGuest(guest.id, guest).subscribe({
+        next: () => {
+          this.messageService.show({
+            type: 'success',
+            text: 'Comment updated successfully.',
+            modal: true,
+            duration: 1000
+          });
+        },
+        error: () => {
+          this.messageService.show({
+            type: 'error',
+            text: 'Failed to update comment.',
+            modal: true,
+            duration: 1000
+          });
+        }
+      });
+    }
+
+    this.editedGuest = null;
+    this.editedComment = '';
+  }
+
 
   closeMessage(): void {
     this.messageService.clear();

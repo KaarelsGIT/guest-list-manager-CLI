@@ -75,7 +75,8 @@ th {
   gap: 10px;
 }
 
-.editable-name {
+.editable-name,
+.editable-comment {
   display: block;
   width: 100%;
   min-height: 1.5em;
@@ -91,6 +92,8 @@ th {
   line-height: inherit;
 }
 
-.editable-name:focus {
+.editable-name:focus,
+.editable-comment:focus {
   background-color: #eef2ff;
 }
+

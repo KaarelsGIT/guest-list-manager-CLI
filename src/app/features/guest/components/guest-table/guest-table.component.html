@@ -41,8 +41,21 @@
            (click)="toggleStatus(guest)">
         {{ getStatusLabel(guest.status) }}
       </div>
-    </td>
-    <td>{{guest.comment}}</td>
+    <td (click)="startEditComment(guest)" >
+      <ng-container *ngIf="editedGuest !== guest; else editCommentTemplate">
+        {{ guest.comment }}
+      </ng-container>
+    <ng-template #editCommentTemplate>
+      <div
+        class="editable-comment"
+        contenteditable="true"
+        (blur)="saveCommentEditFromContent($event, guest)"
+        (keydown.escape)="cancelCommentEdit()"
+        (keydown.enter)="saveCommentEditFromContent($event, guest)"
+        [textContent]="editedComment"
+        #commentInput>
+      </div>
+    </ng-template>
     <td>
       <div class="actions">
         <button mat-raised-button (click)="confirmDelete(guest.id)">Delete</button>
