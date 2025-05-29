@@ -28,7 +28,7 @@ import {FormsModule} from '@angular/forms';
 })
 export class GuestTableComponent implements OnInit, AfterViewChecked {
   @Input() guests: Guest[] = [];
-  @Output() statusChange = new EventEmitter<void>();
+  @Output() onUpdate = new EventEmitter<void>();
 
   @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLDivElement>;
   @ViewChild('commentInput') commentInputRef?: ElementRef<HTMLDivElement>;
@@ -39,7 +39,8 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
   guestToDelete?: number;
   isEditingName = false;
   isEditingComment = false;
-  editedGuest: Guest | null = null;
+  editedGuestName: Guest | null = null;
+  editedGuestComment: Guest | null = null;
   editedName: string = '';
   editedComment: string = '';
 
@@ -55,7 +56,7 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    if (this.editedGuest) {
+    if (this.editedGuestName || this.editedGuestComment) {
       if (this.isEditingName && this.nameInputRef) {
         this.nameInputRef.nativeElement.focus();
         const range = document.createRange();
@@ -77,15 +78,27 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
   }
 
   startEditName(guest: Guest): void {
-    this.editedGuest = guest;
+    this.editedGuestName = guest;
     this.editedName = guest.name;
     this.isEditingName = true;
     this.isEditingComment = false;
   }
 
+  startEditComment(guest: Guest): void {
+    this.editedGuestComment = guest;
+    this.editedComment = guest.comment;
+    this.isEditingName = false;
+    this.isEditingComment = true;
+  }
+
   cancelNameEdit(): void {
-    this.editedGuest = null;
+    this.editedGuestName = null;
     this.editedName = '';
+  }
+
+  cancelCommentEdit(): void {
+    this.editedGuestComment = null;
+    this.editedComment = '';
   }
 
   saveNameEditFromContent(event: Event, guest: Guest): void {
@@ -103,6 +116,7 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
             modal: true,
             duration: 1000
           });
+          this.onUpdate.emit();
         },
         error: () => {
           this.messageService.show({
@@ -115,8 +129,40 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
       });
     }
 
-    this.editedGuest = null;
+    this.editedGuestName = null;
     this.editedName = '';
+  }
+
+  saveCommentEditFromContent(event: Event, guest: Guest): void {
+    const element = event.target as HTMLElement;
+    const newComment = element.textContent?.trim() || '';
+
+    if (newComment !== guest.comment) {
+      guest.comment = newComment;
+
+      this.guestService.updateGuest(guest.id, guest).subscribe({
+        next: () => {
+          this.messageService.show({
+            type: 'success',
+            text: 'Comment updated successfully.',
+            modal: true,
+            duration: 1000
+          });
+          this.onUpdate.emit();
+        },
+        error: () => {
+          this.messageService.show({
+            type: 'error',
+            text: 'Failed to update comment.',
+            modal: true,
+            duration: 1000
+          });
+        }
+      });
+    }
+
+    this.editedGuestComment = null;
+    this.editedComment = '';
   }
 
   getStatusLabel(status: string): string {
@@ -159,7 +205,7 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
     this.guestService.updateGuest(guest.id, guest).subscribe({
       next: () => {
         console.log('Status updated successfully');
-        this.statusChange.emit();
+        this.onUpdate.emit();
       },
       error: (err) => {
         console.error('Failed to update status', err);
@@ -244,50 +290,6 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
       default: return '';
     }
   }
-
-  startEditComment(guest: Guest): void {
-    this.editedGuest = guest;
-    this.editedComment = guest.comment;
-    this.isEditingName = false;
-    this.isEditingComment = true;
-  }
-
-  cancelCommentEdit(): void {
-    this.editedGuest = null;
-    this.editedComment = '';
-  }
-
-  saveCommentEditFromContent(event: Event, guest: Guest): void {
-    const element = event.target as HTMLElement;
-    const newComment = element.textContent?.trim() || '';
-
-    if (newComment && newComment !== guest.comment) {
-      guest.comment = newComment;
-
-      this.guestService.updateGuest(guest.id, guest).subscribe({
-        next: () => {
-          this.messageService.show({
-            type: 'success',
-            text: 'Comment updated successfully.',
-            modal: true,
-            duration: 1000
-          });
-        },
-        error: () => {
-          this.messageService.show({
-            type: 'error',
-            text: 'Failed to update comment.',
-            modal: true,
-            duration: 1000
-          });
-        }
-      });
-    }
-
-    this.editedGuest = null;
-    this.editedComment = '';
-  }
-
 
   closeMessage(): void {
     this.messageService.clear();

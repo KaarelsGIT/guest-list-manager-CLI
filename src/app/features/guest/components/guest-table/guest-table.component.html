@@ -13,7 +13,7 @@
   <tr *ngFor="let guest of guests; let i = index">
     <td>{{ i + 1 }}</td>
     <td (click)="startEditName(guest)" >
-      <ng-container *ngIf="editedGuest !== guest; else editNameTemplate">
+      <ng-container *ngIf="editedGuestName !== guest; else editNameTemplate">
         {{ guest.name }}
       </ng-container>
       <ng-template #editNameTemplate>
@@ -42,7 +42,7 @@
         {{ getStatusLabel(guest.status) }}
       </div>
     <td (click)="startEditComment(guest)" >
-      <ng-container *ngIf="editedGuest !== guest; else editCommentTemplate">
+      <ng-container *ngIf="editedGuestComment !== guest; else editCommentTemplate">
         {{ guest.comment }}
       </ng-container>
     <ng-template #editCommentTemplate>

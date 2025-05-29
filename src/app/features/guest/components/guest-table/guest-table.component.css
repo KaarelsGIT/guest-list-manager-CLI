@@ -1,58 +1,61 @@
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1rem 0;
-  font-size: 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-thead {
-  background-color: #f4f4f4;
+  table-layout: fixed;
 }
 
 th, td {
-  padding: 0.75rem 1rem;
+  padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #ccc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-tr:hover {
-  background-color: #f9f9f9;
+th:nth-child(1), td:nth-child(1) {
+  width: 15%;
+  text-align: center;
 }
 
-th {
-  font-weight: bold;
-  color: #333;
+th:nth-child(2), td:nth-child(2) {
+  width: 15%;
+  text-align: left;
+}
+
+th:nth-child(3), td:nth-child(3) {
+  width: 10%;
+  text-align: center;
+}
+
+th:nth-child(4), td:nth-child(4) {
+  width: 10%;
+  text-align: center;
+}
+
+th:nth-child(5), td:nth-child(5) {
+  width: 15%;
+  padding-left: 45px;
+}
+
+th:nth-child(6), td:nth-child(6) {
+  width: 15%;
+  text-align: center;
+}
+
+.editable-name,
+.editable-comment {
+  outline: none;
+  min-height: 24px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .toggle-cell {
   cursor: pointer;
-  user-select: none;
-  font-family: inherit;
-  font-size: inherit;
-  color: #111;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background-color: #f3f4f6;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.toggle-cell:hover {
-  background-color: #e5e7eb;
-}
-
-.status-needed {
-  background-color: #d1fae5;
-  color: #065f46;
-}
-
-.status-not-needed {
-  background-color: #f3f4f6;
-  color: #374151;
+  padding: 6px 8px;
+  border-radius: 4px;
 }
 
 .status-accepted {
@@ -61,39 +64,21 @@ th {
 }
 
 .status-pending {
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: #fef3c7;
+  color: #92400e;
 }
 
 .status-rejected {
   background-color: #fee2e2;
-  color: #b91c1c;
+  color: #991b1b;
 }
 
-.actions {
-  display: flex;
-  gap: 10px;
+.status-needed {
+  background-color: #bfdbfe;
+  color: #1e3a8a;
 }
 
-.editable-name,
-.editable-comment {
-  display: block;
-  width: 100%;
-  min-height: 1.5em;
-  padding: 4px 6px;
-  border-radius: 4px;
-  background-color: transparent;
-  outline: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  box-sizing: border-box;
-  font: inherit;
-  line-height: inherit;
+.status-not-needed {
+  background-color: #e0e7ff;
+  color: #3730a3;
 }
-
-.editable-name:focus,
-.editable-comment:focus {
-  background-color: #eef2ff;
-}
-

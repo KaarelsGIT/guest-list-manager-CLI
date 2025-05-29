@@ -18,7 +18,7 @@
   <app-guest-table
     #guestTable
     [guests]="guests"
-    (statusChange)="loadGuests()"
+    (onUpdate)="loadGuests()"
   ></app-guest-table>
 </div>
 </body>
