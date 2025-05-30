@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
   loadGuests(): void {
     this.guestService.getAllGuests().subscribe({
       next: (data) => {
-        this.guests = data.guests;
+        this.guests = [...data.guests];
         this.acceptedCount = data.accepted;
       },
       error: (err) => {
