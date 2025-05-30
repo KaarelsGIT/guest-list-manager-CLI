@@ -9,7 +9,7 @@ import {
 import {MessageService} from '../../../../shared/components/service/message.service';
 import {MessageModalComponent} from '../../../../shared/components/message-modal/message-modal.component';
 import {AppMessage} from '../../../../shared/models/message.model';
-import { Subscription } from 'rxjs';
+import {Subscription} from 'rxjs';
 import {FormsModule} from '@angular/forms';
 
 @Component({
@@ -37,17 +37,16 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
   private messageSubscription?: Subscription;
   showConfirmDialog = false;
   guestToDelete?: number;
-  isEditingName = false;
-  isEditingComment = false;
-  editedGuestName: Guest | null = null;
-  editedGuestComment: Guest | null = null;
-  editedName: string = '';
-  editedComment: string = '';
+
+  editingGuest: Guest | null = null;
+  editingField: 'name' | 'comment' | null = null;
+  editedValue = '';
 
   constructor(
     private guestService: GuestService,
     private messageService: MessageService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.messageSubscription = this.messageService.message$.subscribe(msg => {
@@ -56,134 +55,90 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    if (this.editedGuestName || this.editedGuestComment) {
-      if (this.isEditingName && this.nameInputRef) {
-        this.nameInputRef.nativeElement.focus();
-        const range = document.createRange();
-        const sel = window.getSelection();
-        range.selectNodeContents(this.nameInputRef.nativeElement);
-        range.collapse(false);
-        sel?.removeAllRanges();
-        sel?.addRange(range);
-      } else if (this.isEditingComment && this.commentInputRef) {
-        this.commentInputRef.nativeElement.focus();
-        const range = document.createRange();
-        const sel = window.getSelection();
-        range.selectNodeContents(this.commentInputRef.nativeElement);
-        range.collapse(false);
-        sel?.removeAllRanges();
-        sel?.addRange(range);
+    if (!this.editingGuest || !this.editingField) return;
+
+    const ref = this.editingField === 'name' ? this.nameInputRef : this.commentInputRef;
+    if (ref) {
+      const el = ref.nativeElement;
+      el.focus();
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    }
+  }
+
+  startEdit(guest: Guest, field: 'name' | 'comment'): void {
+    this.editingGuest = guest;
+    this.editingField = field;
+    this.editedValue = field === 'name' ? guest.name : guest.comment;
+  }
+
+  cancelEdit(): void {
+    this.editingGuest = null;
+    this.editingField = null;
+    this.editedValue = '';
+  }
+
+  saveEditFromContent(event: Event): void {
+    if (!this.editingGuest || !this.editingField) return;
+
+    const element = event.target as HTMLElement;
+    const newValue = element.textContent?.trim() || '';
+    const field = this.editingField;
+
+    if ((field === 'name' && newValue === this.editingGuest.name) ||
+      (field === 'comment' && newValue === this.editingGuest.comment)) {
+      this.cancelEdit();
+      return;
+    }
+
+    if (field === 'name') this.editingGuest.name = newValue;
+    if (field === 'comment') this.editingGuest.comment = newValue;
+
+    this.guestService.updateGuest(this.editingGuest.id, this.editingGuest).subscribe({
+      next: () => {
+        this.messageService.show({
+          type: 'success',
+          text: `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully.`,
+          modal: true,
+          duration: 1000
+        });
+        this.onUpdate.emit();
+      },
+      error: () => {
+        this.messageService.show({
+          type: 'error',
+          text: `Failed to update ${field}.`,
+          modal: true,
+          duration: 1000
+        });
       }
-    }
-  }
+    });
 
-  startEditName(guest: Guest): void {
-    this.editedGuestName = guest;
-    this.editedName = guest.name;
-    this.isEditingName = true;
-    this.isEditingComment = false;
-  }
-
-  startEditComment(guest: Guest): void {
-    this.editedGuestComment = guest;
-    this.editedComment = guest.comment;
-    this.isEditingName = false;
-    this.isEditingComment = true;
-  }
-
-  cancelNameEdit(): void {
-    this.editedGuestName = null;
-    this.editedName = '';
-  }
-
-  cancelCommentEdit(): void {
-    this.editedGuestComment = null;
-    this.editedComment = '';
-  }
-
-  saveNameEditFromContent(event: Event, guest: Guest): void {
-    const element = event.target as HTMLElement;
-    const newName = element.textContent?.trim() || '';
-
-    if (newName && newName !== guest.name) {
-      guest.name = newName;
-
-      this.guestService.updateGuest(guest.id, guest).subscribe({
-        next: () => {
-          this.messageService.show({
-            type: 'success',
-            text: 'Name updated successfully.',
-            modal: true,
-            duration: 1000
-          });
-          this.onUpdate.emit();
-        },
-        error: () => {
-          this.messageService.show({
-            type: 'error',
-            text: 'Failed to update name.',
-            modal: true,
-            duration: 1000
-          });
-        }
-      });
-    }
-
-    this.editedGuestName = null;
-    this.editedName = '';
-  }
-
-  saveCommentEditFromContent(event: Event, guest: Guest): void {
-    const element = event.target as HTMLElement;
-    const newComment = element.textContent?.trim() || '';
-
-    if (newComment !== guest.comment) {
-      guest.comment = newComment;
-
-      this.guestService.updateGuest(guest.id, guest).subscribe({
-        next: () => {
-          this.messageService.show({
-            type: 'success',
-            text: 'Comment updated successfully.',
-            modal: true,
-            duration: 1000
-          });
-          this.onUpdate.emit();
-        },
-        error: () => {
-          this.messageService.show({
-            type: 'error',
-            text: 'Failed to update comment.',
-            modal: true,
-            duration: 1000
-          });
-        }
-      });
-    }
-
-    this.editedGuestComment = null;
-    this.editedComment = '';
+    this.cancelEdit();
   }
 
   getStatusLabel(status: string): string {
     switch (status) {
-      case 'PENDING': return 'PENDING';
-      case 'ACCEPTED': return 'ACCEPTED';
-      case 'REJECTED': return 'REJECTED';
-      default: return 'UNKNOWN';
+      case 'PENDING':
+        return 'PENDING';
+      case 'ACCEPTED':
+        return 'ACCEPTED';
+      case 'REJECTED':
+        return 'REJECTED';
+      default:
+        return 'UNKNOWN';
     }
   }
 
   toggleTransportation(guest: Guest): void {
     guest.transportation = !guest.transportation;
-
     this.guestService.updateGuest(guest.id, guest).subscribe({
-      next: () => {
-        console.log('Transportation status updated successfully.');
-      },
-      error: (err) => {
-        console.error('Failed to update transportation status:', err);
-      }
+      next: () => console.log('Transportation status updated'),
+      error: (err) => console.error('Failed to update transportation status', err)
     });
   }
 
@@ -204,12 +159,10 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
 
     this.guestService.updateGuest(guest.id, guest).subscribe({
       next: () => {
-        console.log('Status updated successfully');
+        console.log('Status updated');
         this.onUpdate.emit();
       },
-      error: (err) => {
-        console.error('Failed to update status', err);
-      }
+      error: (err) => console.error('Failed to update status', err)
     });
   }
 
@@ -224,58 +177,41 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
   }
 
   performDelete(): void {
-    if (this.guestToDelete === undefined) {
-      this.guestService.deleteAllGuests().subscribe({
-        next: () => {
-          this.guests = [];
-          this.cancelDelete();
-          this.messageService.show({
-            type: 'success',
-            text: 'All guests deleted successfully.',
-            modal: true,
-            duration: 1000
-          });
-        },
-        error: (err) => {
-          console.error('Failed to delete all guests', err);
-          this.cancelDelete();
-          this.messageService.show({
-            type: 'error',
-            text: 'Failed to delete all guests.',
-            modal: true,
-            duration: 1000
-          });
-        }
-      });
-    } else {
-      this.guestService.deleteGuest(this.guestToDelete).subscribe({
-        next: () => {
-          this.guests = this.guests.filter(g => g.id !== this.guestToDelete);
-          this.cancelDelete();
-          this.messageService.show({
-            type: 'success',
-            text: 'Guest deleted successfully.',
-            modal: true,
-            duration: 1000
-          });
-        },
-        error: (err) => {
-          console.error('Delete failed', err);
-          this.cancelDelete();
-          this.messageService.show({
-            type: 'error',
-            text: 'Failed to delete guest.',
-            modal: true,
-            duration: 1000
-          });
-        }
-      });
-    }
+    const isDeletingAll = this.guestToDelete === undefined;
+
+    const deleteCall = isDeletingAll
+      ? this.guestService.deleteAllGuests()
+      : this.guestService.deleteGuest(this.guestToDelete!);
+
+    deleteCall.subscribe({
+      next: () => {
+        this.guests = isDeletingAll
+          ? []
+          : this.guests.filter(g => g.id !== this.guestToDelete);
+        this.cancelDelete();
+        this.messageService.show({
+          type: 'success',
+          text: isDeletingAll ? 'All guests deleted successfully.' : 'Guest deleted successfully.',
+          modal: true,
+          duration: 1000
+        });
+      },
+      error: (err) => {
+        console.error('Delete failed', err);
+        this.cancelDelete();
+        this.messageService.show({
+          type: 'error',
+          text: isDeletingAll ? 'Failed to delete all guests.' : 'Failed to delete guest.',
+          modal: true,
+          duration: 1000
+        });
+      }
+    });
   }
 
   confirmDeleteAllGuests(): void {
-    this.showConfirmDialog = true;
     this.guestToDelete = undefined;
+    this.showConfirmDialog = true;
   }
 
   getTransportationClass(transportation: boolean): string {
@@ -284,10 +220,14 @@ export class GuestTableComponent implements OnInit, AfterViewChecked {
 
   getStatusClass(status: string): string {
     switch (status) {
-      case 'ACCEPTED': return 'status-accepted';
-      case 'PENDING': return 'status-pending';
-      case 'REJECTED': return 'status-rejected';
-      default: return '';
+      case 'ACCEPTED':
+        return 'status-accepted';
+      case 'PENDING':
+        return 'status-pending';
+      case 'REJECTED':
+        return 'status-rejected';
+      default:
+        return '';
     }
   }
 

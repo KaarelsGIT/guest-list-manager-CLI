@@ -1,3 +1,4 @@
+<div class="table-wrapper">
 <table>
   <thead>
   <tr>
@@ -6,56 +7,65 @@
     <th>Transport</th>
     <th>Status</th>
     <th>Comments</th>
-    <th>actions</th>
+    <th>Actions</th>
   </tr>
   </thead>
   <tbody>
   <tr *ngFor="let guest of guests; let i = index">
     <td>{{ i + 1 }}</td>
-    <td (click)="startEditName(guest)" >
-      <ng-container *ngIf="editedGuestName !== guest; else editNameTemplate">
+
+    <td (click)="startEdit(guest, 'name')">
+      <ng-container *ngIf="!(editingGuest === guest && editingField === 'name'); else editNameTemplate">
         {{ guest.name }}
       </ng-container>
       <ng-template #editNameTemplate>
         <div
           class="editable-name"
           contenteditable="true"
-          (blur)="saveNameEditFromContent($event, guest)"
-          (keydown.escape)="cancelNameEdit()"
-          (keydown.enter)="saveNameEditFromContent($event, guest)"
-          [textContent]="editedName"
+          (blur)="saveEditFromContent($event)"
+          (keydown.escape)="cancelEdit()"
+          (keydown.enter)="saveEditFromContent($event)"
+          [textContent]="editedValue"
           #nameInput>
         </div>
       </ng-template>
     </td>
+
     <td>
-      <div class="toggle-cell"
-           [ngClass]="getTransportationClass(guest.transportation)"
-           (click)="toggleTransportation(guest)">
+      <div
+        class="toggle-cell"
+        [ngClass]="getTransportationClass(guest.transportation)"
+        (click)="toggleTransportation(guest)">
         {{ guest.transportation ? 'Needed' : 'Not needed' }}
       </div>
     </td>
+
     <td>
-      <div class="toggle-cell"
-           [ngClass]="getStatusClass(guest.status)"
-           (click)="toggleStatus(guest)">
+      <div
+        class="toggle-cell"
+        [ngClass]="getStatusClass(guest.status)"
+        (click)="toggleStatus(guest)">
         {{ getStatusLabel(guest.status) }}
       </div>
-    <td (click)="startEditComment(guest)" >
-      <ng-container *ngIf="editedGuestComment !== guest; else editCommentTemplate">
+    </td>
+
+    <td (click)="startEdit(guest, 'comment')">
+      <ng-container *ngIf="!(editingGuest === guest && editingField === 'comment'); else editCommentTemplate">
         {{ guest.comment }}
       </ng-container>
-    <ng-template #editCommentTemplate>
-      <div
-        class="editable-comment"
-        contenteditable="true"
-        (blur)="saveCommentEditFromContent($event, guest)"
-        (keydown.escape)="cancelCommentEdit()"
-        (keydown.enter)="saveCommentEditFromContent($event, guest)"
-        [textContent]="editedComment"
-        #commentInput>
-      </div>
-    </ng-template>
+      <ng-template #editCommentTemplate>
+        <div
+          class="editable-comment"
+          contenteditable="true"
+          (blur)="saveEditFromContent($event)"
+          (keydown.escape)="cancelEdit()"
+          (keydown.enter)="saveEditFromContent($event)"
+          [textContent]="editedValue"
+          #commentInput>
+        </div>
+      </ng-template>
+    </td>
+
     <td>
       <div class="actions">
         <button mat-raised-button (click)="confirmDelete(guest.id)">Delete</button>
@@ -65,7 +75,8 @@
   </tbody>
 </table>
 
-<!-- Confirm dialog -->
+
+<!-- CONFIRMATION DIALOG -->
 <app-confirmation-dialog
   *ngIf="showConfirmDialog"
   [message]="guestToDelete === undefined
@@ -76,9 +87,10 @@
 </app-confirmation-dialog>
 
 
-<!-- MESSAGE MODAL -->
+<!-- MESSAGE-->
 <app-message-modal
   *ngIf="message"
   [message]="message"
   (closed)="closeMessage()">
 </app-message-modal>
+</div>
