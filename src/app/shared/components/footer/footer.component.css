@@ -5,7 +5,7 @@
   background-color: #f2f2f2;
   color: #555;
   border-top: 1px solid #ccc;
-  position: fixed;
+  /*position: fixed;*/
   bottom: 0;
   width: 100%;
 }
