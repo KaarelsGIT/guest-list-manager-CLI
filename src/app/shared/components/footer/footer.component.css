@@ -1,3 +1,18 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+}
+
 .app-footer {
   text-align: center;
   padding: 1rem;
@@ -5,8 +20,6 @@
   background-color: #f2f2f2;
   color: #555;
   border-top: 1px solid #ccc;
-  /*position: fixed;*/
-  bottom: 0;
   width: 100%;
 }
 .app-footer a {

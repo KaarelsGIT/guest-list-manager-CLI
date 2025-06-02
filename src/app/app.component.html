@@ -1,28 +1,31 @@
-<header>
-  <app-header
-    [formVisible]="isFormVisible"
-    (addClicked)="toggleForm()"
-    (removeClicked)="onRemoveAllGuests()"
-  ></app-header>
-</header>
+<!-- ÄRA kasuta <body> HTMLi sees — see on juba dokumendi osa -->
+<div class="page-wrapper">
+  <header>
+    <app-header
+      [formVisible]="isFormVisible"
+      (addClicked)="toggleForm()"
+      (removeClicked)="onRemoveAllGuests()"
+    ></app-header>
+  </header>
 
-<body>
-<div class="container">
-  <div *ngIf="isFormVisible">
-    <app-add-guest
-      (guestAdded)="onGuestAdded()"
-      (cancelled)="toggleForm()"
-    ></app-add-guest>
-  </div>
-  <div class="accepted-count">Accepted: {{ acceptedCount }}</div>
-  <app-guest-table
-    #guestTable
-    [guests]="guests"
-    (onUpdate)="loadGuests()"
-  ></app-guest-table>
+  <main class="content">
+    <div class="container">
+      <div *ngIf="isFormVisible">
+        <app-add-guest
+          (guestAdded)="onGuestAdded()"
+          (cancelled)="toggleForm()"
+        ></app-add-guest>
+      </div>
+      <div class="accepted-count">Accepted: {{ acceptedCount }}</div>
+      <app-guest-table
+        #guestTable
+        [guests]="guests"
+        (onUpdate)="loadGuests()"
+      ></app-guest-table>
+    </div>
+  </main>
+
+  <footer>
+    <app-footer></app-footer>
+  </footer>
 </div>
-</body>
-
-<footer>
-  <app-footer></app-footer>
-</footer>
